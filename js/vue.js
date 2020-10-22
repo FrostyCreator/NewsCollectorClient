@@ -1,28 +1,55 @@
 var vue_data = new Vue({
-    el: '#newsTable',
+    el: '#news',
     created() {
-        this.getData()
+        this.getData();
     },
     data: {
-        news: []
+        urls: {
+            getAllNews: 'http://localhost:8080/getNews',
+            updateData: 'http://localhost:8080/update',
+            deleteNews: 'http://localhost:8080/delete/'
+        },
+        news: [],
+        sites: []
     },
     methods: {
-        getData : function () {
-            var xhr = new XMLHttpRequest();
+        // Получить новости из бд
+        getData: function () {
+            axios.get(this.urls.getAllNews).then((response) => {
+                this.news = response.data;
+                this.sites = [...new Set(response.data.map(n => n.site))]
+            })
+        },
 
-            xhr.open('GET', 'http://localhost:8080/getNews', false);
+        // Обновить новости в бд
+        updateData: function () {
+            axios.get(this.urls.updateData).then(() => {
+                this.getData();
+                window.location.reload();
+            });
+        },
 
-            xhr.send();
+        // Фильтрация новостей по сайту
+        changeSiteNews: function (s = '') {
+            el = document.getElementById('dropdownMenu');
 
-            if (xhr.status != 200) {
-                // обработать ошибку
-                console.log('ошибка запросв')
-                console.log( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
-            } else {
-                // вывести результат
-                this.news = JSON.parse(xhr.response)
-                console.log( xhr.responseText ); // responseText -- текст ответа.
-            }
+            axios.get(this.urls.getAllNews).then((response) => {
+                if (s != '') {
+                    this.news = response.data.filter(n => n.site == s);
+                    el.textContent = s.replace('https://', '')
+                } else {
+                    this.news = response.data;
+                    el.textContent = 'Выберите сайт'
+                }
+                this.sites = [...new Set(response.data.map(n => n.site))];
+            })
+        },
+
+        // Удалить новость
+        deleteNews: function (id) {
+            document.getElementById(id).remove()
+            axios.post(this.urls.deleteNews + id)
         }
+
     }
 });
