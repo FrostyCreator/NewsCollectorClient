@@ -23,6 +23,8 @@ var vue_data = new Vue({
 
         // Обновить новости в бд
         updateData: function () {
+            document.getElementById('btnUpdate').hidden = true;
+            document.getElementById('progressBar').hidden = false;
             axios.get(this.urls.updateData).then(() => {
                 this.getData();
                 window.location.reload();
@@ -47,8 +49,8 @@ var vue_data = new Vue({
 
         // Удалить новость
         deleteNews: function (id) {
-            document.getElementById(id).remove()
-            axios.post(this.urls.deleteNews + id)
+            this.news = this.news.filter(n => n.id != id);
+            axios.post(this.urls.deleteNews + id);
         }
 
     }
