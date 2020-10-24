@@ -50,7 +50,7 @@ var vue_data = new Vue({
         // Удалить новость
         deleteNews: function (id) {
             this.news = this.news.filter(n => n.id != id);
-            axios.post(this.urls.deleteNews + id);
+            axios.delete(this.urls.deleteNews + id);
         }
 
     }
