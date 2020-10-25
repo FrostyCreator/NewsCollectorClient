@@ -49,9 +49,13 @@ var vue_data = new Vue({
 
         // Удалить новость
         deleteNews: function (id) {
-            this.news = this.news.filter(n => n.id != id);
-            axios.delete(this.urls.deleteNews + id);
+            axios.delete(this.urls.deleteNews + id)
+                .then(response => {
+                    if (response.status === 200) {
+                        this.news = this.news.filter(n => n.id != id);
+                    }
+                })
+                .catch(error => console.log("Ошибка при удалении новости с id " + id))
         }
-
     }
 });
