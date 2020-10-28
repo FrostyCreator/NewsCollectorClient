@@ -1,4 +1,26 @@
+#buttons {
+    position: relative;
+}
+
+#btn_delete {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+}
+
 #progressBar {
     height: 38px;
     width: 113px;
+}
+
+#time {
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+}
+
+.update {
+    position: absolute;
+    top: 0;
+    right: 0;
 }

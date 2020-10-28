@@ -10,13 +10,17 @@ var vue_data = new Vue({
             deleteNews: 'http://localhost:8080/delete/'
         },
         news: [],
-        sites: []
+        sites: [],
+        dateOptions: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
     },
     methods: {
         // Получить новости из бд
         getData: function () {
             axios.get(this.urls.getAllNews).then((response) => {
                 this.news = response.data;
+                this.news.sort(function(a, b){
+                    return new Date(b.date) - new Date(a.date);
+                });
                 this.sites = [...new Set(response.data.map(n => n.site))]
             })
         },
@@ -33,11 +37,11 @@ var vue_data = new Vue({
 
         // Фильтрация новостей по сайту
         changeSiteNews: function (s = '') {
-            el = document.getElementById('dropdownMenu');
+            let el = document.getElementById('dropdownMenu');
 
             axios.get(this.urls.getAllNews).then((response) => {
-                if (s != '') {
-                    this.news = response.data.filter(n => n.site == s);
+                if (s !== '') {
+                    this.news = response.data.filter(n => n.site === s);
                     el.textContent = s.replace('https://', '')
                 } else {
                     this.news = response.data;
@@ -56,6 +60,11 @@ var vue_data = new Vue({
                     }
                 })
                 .catch(error => console.log("Ошибка при удалении новости с id " + id))
+        },
+
+        getDate: function (date) {
+
+            return date.toLocaleDateString('ru-RU', this.dateOptions);
         }
     }
 });
